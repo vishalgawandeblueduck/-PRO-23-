@@ -1,18 +1,20 @@
-chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
-    if (request.action === 'extractTagData') {
-      var tag = request.tag.toLowerCase();
-      var code = 'Array.from(document.getElementsByTagName("' + tag + '")).map(function(elem) { return elem.innerText; }).join("\\n")';
-  
-      chrome.tabs.executeScript(request.tabId, { code: code }, function(results) {
-        if (chrome.runtime.lastError) {
-          console.error(chrome.runtime.lastError);
-        } else {
-          var tagData = results[0];
-          sendResponse({ tagData: tagData });
-        }
-      });
-  
-      return true; // Indicates that the response will be sent asynchronously
+// background.js
+
+// Function to send a message to the content script to extract data
+function sendMessageToContentScript(tabId, divClassName) {
+  chrome.tabs.sendMessage(tabId, { message: 'extractData', divClassName: divClassName }, function (response) {
+    if (response && response.success) {
+      console.log('Data extraction successful!');
+    } else {
+      console.log('Data extraction failed.');
     }
   });
-  
+}
+
+// Listen for clicks on the extension's toolbar button
+chrome.browserAction.onClicked.addListener(function (tab) {
+  const divClassName = prompt('Enter the class name of the div:');
+  if (divClassName) {
+    sendMessageToContentScript(tab.id, divClassName);
+  }
+});
