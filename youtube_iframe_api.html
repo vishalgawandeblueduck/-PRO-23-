@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>YouTube Video Player</title>
+  <script src="https://www.youtube.com/iframe_api"></script>
+</head>
+<body>
+  <div id="player"></div>
+
+  <script>
+    var videoId = 'IN3AiZkfsrk'; // Replace with the actual YouTube video ID
+
+    function onYouTubeIframeAPIReady() {
+      var player = new YT.Player('player', {
+        videoId: videoId,
+        height: '360',
+        width: '640',
+        events: {
+          'onReady': onPlayerReady
+        }
+      });
+    }
+
+    function onPlayerReady(event) {
+      event.target.playVideo();
+    }
+  </script>
+
+  <script>
+    // Load the YouTube API asynchronously
+    var tag = document.createElement('script');
+    tag.src = "https://www.youtube.com/iframe_api";
+    var firstScriptTag = document.getElementsByTagName('script')[0];
+    firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
+  </script>
+</body>
+</html>
