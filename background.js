@@ -1,20 +1,42 @@
-// background.js
+let isRecording = false;
+let intervalId;
+let stopTimeoutId;
 
-// Function to send a message to the content script to extract data
-function sendMessageToContentScript(tabId, divClassName) {
-  chrome.tabs.sendMessage(tabId, { message: 'extractData', divClassName: divClassName }, function (response) {
-    if (response && response.success) {
-      console.log('Data extraction successful!');
-    } else {
-      console.log('Data extraction failed.');
+chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
+  if (message.action === 'startScreenshot') {
+    if (!isRecording) {
+      isRecording = true;
+      sendResponse({ result: 'success' }); 
+
+      const captureAndDownloadScreenshot = function () {
+        chrome.tabs.captureVisibleTab(null, { format: 'png' }, function (dataUrl) {
+          const fileName = 'screenshot_' + Date.now() + '.png';
+          chrome.downloads.download({ url: dataUrl, filename: fileName });
+        });
+      };
+
+      
+      captureAndDownloadScreenshot();
+
+      // interval timer
+      intervalId = setInterval(captureAndDownloadScreenshot, 2000);
+
+      // stopping timer
+      stopTimeoutId = setTimeout(function () {
+        stopRecording();
+      }, 20000);
     }
-  });
-}
-
-// Listen for clicks on the extension's toolbar button
-chrome.browserAction.onClicked.addListener(function (tab) {
-  const divClassName = prompt('Enter the class name of the div:');
-  if (divClassName) {
-    sendMessageToContentScript(tab.id, divClassName);
+  } else if (message.action === 'stopScreenshot') {
+    stopRecording();
   }
 });
+
+function stopRecording() {
+  if (isRecording) {
+    isRecording = false;
+    clearInterval(intervalId);
+    clearTimeout(stopTimeoutId);
+    intervalId = null; 
+    stopTimeoutId = null; 
+  }
+}

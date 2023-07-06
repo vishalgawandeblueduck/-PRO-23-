@@ -1,12 +1,15 @@
-<!-- popup.html -->
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Image Downloader</title>
+  <title>Screenshot Extension</title>
   <script src="popup.js"></script>
 </head>
 <body>
-  <input type="text" id="tagInput" placeholder="Enter HTML tag of the image">
-  <button id="downloadButton">Download Image</button>
+  <button id="startButton">Start</button>
+  <script>
+    document.getElementById('startButton').addEventListener('click', function () {
+      chrome.runtime.sendMessage({ action: 'startScreenshot' });
+    });
+  </script>
 </body>
 </html>
