@@ -1,0 +1,15 @@
+{
+    "manifest_version": 2,
+    "name": "Screenshot Extension for windowed",
+    "version": "2.0",
+    "permissions": ["activeTab", "tabs", "storage", "downloads"],
+    "browser_action": {
+      "default_popup": "popup.html",
+      "default_title": "Screenshot Extension"
+    },
+    "background": {
+      "scripts": ["background.js"],
+      "persistent": false
+    }
+  }
+  
