@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Screenshot Viewer</title>
+  </head>
+  <body>
+    <div id="screenshot-container"></div>
+    <script>
+      const screenshotContainer = document.getElementById('screenshot-container');
+
+      // Listen for messages from the Chrome extension
+      window.addEventListener('message', function (event) {
+        const message = event.data;
+        if (message.action === 'displayScreenshot') {
+          const screenshotImg = document.createElement('img');
+          screenshotImg.src = message.dataUrl;
+          screenshotContainer.appendChild(screenshotImg);
+        }
+      });
+    </script>
+  </body>
+</html>
